@@ -17,7 +17,7 @@ export const setupKeys = async (api: ApiPromise) => {
   await cryptoWaitReady()
   const keyring = new Keyring({ type: 'sr25519' })
   const ss58Prefix = api.consts.system.ss58Prefix as unknown
-  console.log("reading files")
+  // console.log("reading files")
 
   await fs
     .readFile(process.env.SEED_PATH)
@@ -224,25 +224,6 @@ export const printIntro = () => {
   console.log(string)
 }
 
-export const printChoices = () => {
-  const string = colors.yellow(`Choices:
-  
-  0.) Refresh:    Refresh this page.
-
-  1.) Self-Mint:  Submit kBTC issue request against your own vault whilst keeping 
-                  it shut to outsiders.
-
-  2.) Harvest:    Harvest any KINT earnt as rewards, bridge to Karura to swap it for 
-                  KSM, bridge back to Kintsugi to deposit it as collateral.
-
-  3.) Rebalance:  Manage your vault's collateral ratio by using aUSD/kBTC liquidity pool
-                  on Karura.
-
-  4.) Quit:       Leave with regret.
-                `)
-  console.log(string)
-}
-
 export const chooser = async (answer) => {
   const number = Number(answer)
   switch (number) {
@@ -253,7 +234,7 @@ export const chooser = async (answer) => {
       await mint()
       break
     case 2:
-      // await harvest()
+       await harvest()
       break
     case 3:
       // await rebalance()

@@ -14,22 +14,23 @@ export const mainMenu = () => {
       new inquirer.Separator(),
       {
         name: 
-        `2) Self-Mint:     Submit kBTC issue request against your own vault whilst keeping 
+        `2) Self-Mint:     Submit iBTC issue request against your own vault whilst keeping 
                     it shut to outsiders.`,
         value: 1,
         short: 'MINT',
       },
       {
         name: 
-        `3) Harvest:       Harvest any KINT earnt as rewards, bridge to Karura to swap it for 
-                    KSM, bridge back to Kintsugi to deposit it as collateral.`,
+        `3) Harvest:       Harvest any INTR earnt as rewards, bridge to Acala to swap it for 
+                    DOT, bridge back to Interlay to deposit it as collateral.`,
         value: 2,
         short: 'HVST',
       },
       {
         name: 
-        `4) Rebalance:     Manage your vault's collateral ratio by using aUSD/kBTC liquidity pool
-                    on Karura.`,
+        // `4) Rebalance:     Manage your vault's collateral ratio by using aUSD/iBTC liquidity pool
+        //             on Acala.`,
+            `4) Rebalance:     Coming Soon.`,
         value: 3,
         short: 'RBAL',
       },

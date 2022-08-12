@@ -10,7 +10,7 @@ export const setupInterlay = async () => {
   const api = (await getIntrApi())!
   const { address, signer } = await setupKeys(api)
 
-  const destinationKarura = {
+  const destinationAcala = {
     V1: {
       parents: 1,
       interior: {
@@ -44,9 +44,9 @@ export const setupInterlay = async () => {
     return resp
   }
 
-  const active = ((await getVaultInfo()) as any).status.active ? true : false
+  const active = !!((await getVaultInfo()) as any).status.active
   const unbanned =
-    ((await getVaultInfo()) as any).bannedUntil === null ? true : false
+    ((await getVaultInfo()) as any).bannedUntil === null
 
   const getToBeIssued = async () => {
     const resp =
@@ -82,7 +82,7 @@ export const setupInterlay = async () => {
     return formatted ? result.toNumber(2) : result.toNumber()
   }
 
-  const getKsmFree = async (formatted: boolean = false) => {
+  const getDotFree = async (formatted: boolean = false) => {
     const free = ((await api.query.tokens.accounts(address, dot)) as any).free
     // const reserved = ((await api.query.tokens.accounts(address, dot)) as any).reserved
     // const available = new FP(free.toString(),1).sub(new FP(reserved.toString(),1))
@@ -106,7 +106,7 @@ export const setupInterlay = async () => {
     const scalingFactor = new Big(Math.pow(10, 18))
     const xScaled = xStake.div(scalingFactor)
     const calc = xScaled.mul(rewardPerToken).sub(rewardTally)
-    const rewardFactor = new Big(Math.pow(10, 30))
+    const rewardFactor = new Big(Math.pow(10, 28))
     const formattedCalc = calc.div(rewardFactor)
     return formattedCalc.toFixed(2)
   }
@@ -159,11 +159,11 @@ export const setupInterlay = async () => {
     return ratio
   }
 
-  const bridgeToKarura = (amount: FixedPointNumber) => {
+  const bridgeToAcala = (amount: FixedPointNumber) => {
     const txn = api.tx.xTokens.transfer(
       intr,
       amount.toChainData(),
-      destinationKarura,
+      destinationAcala,
       5000000000
     )
     return txn
@@ -192,14 +192,12 @@ export const setupInterlay = async () => {
       tokenPair,
       amount.toString()
     )
-    const details = await submitTx(txn, signer)
-    return details
+    return await submitTx(txn, signer)
   }
 
   const submitBatch = async (calls: any[]) => {
     const txn = api.tx.utility.batchAll(calls)
-    const details = await submitTx(txn, signer)
-    return details
+    return await submitTx(txn, signer)
   }
 
   const withdrawCollateralAndBridge = async (
@@ -215,7 +213,7 @@ export const setupInterlay = async () => {
       .toChainData()
     const txns = [
       api.tx.vaultRegistry.withdrawCollateral(dotCurrencyPair, amount),
-      api.tx.xTokens.transfer(dot, amount, destinationKarura, 5000000000),
+      api.tx.xTokens.transfer(dot, amount, destinationAcala, 5000000000),
     ]
 
     process.stdout.write(
@@ -242,12 +240,6 @@ export const setupInterlay = async () => {
       throw new Error('Insufficient KINT')
     }
 
-    // if (Number(await getToBeIssued()) > 0.0001) {
-    //   console.error(
-    //     'This vault already have issue requests currently pending. Aborting'
-    //   )
-    //   throw new Error('Pending issue requests detected')
-    // }
     const amount = BigInt(
       (Number(await getMintCapacity(collatPercent)) * 10 ** 8).toFixed(0)
     )
@@ -283,7 +275,7 @@ export const setupInterlay = async () => {
     address,
     blob,
     active,
-    bridgeToKarura,
+    bridgeToAcala,
     claimRewards,
     depositCollateral,
     unbanned,
@@ -293,7 +285,7 @@ export const setupInterlay = async () => {
     getCollateralFromRatio,
     getIntrFree,
     getIntrPending,
-    getKsmFree,
+    getDotFree,
     getRatio,
     getMintCapacity,
     getToBeIssued,
